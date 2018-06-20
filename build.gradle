@@ -1,0 +1,32 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+
+group 'com.ticomgeo.pom'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+
+    compile('com.google.guava:guava:24.1-jre') {
+        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+        exclude group: 'org.checkerframework', module: 'checker-compat-qual'
+        exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
+        exclude group: 'com.google.j2objc', module: 'j2objc-annotations'
+        exclude group: 'org.codehaus.mojo', module: 'animal-sniffer-annotations'
+    }
+    //compileOnly 'org.projectlombok:lombok:1.16.10'
+    //annotationProcessor 'org.projectlombok:lombok:1.16.10'
+
+    compile 'org.slf4j:slf4j-api:1.7.18'
+    compile 'log4j:log4j:1.2.17'
+    compile 'org.slf4j:slf4j-log4j12:1.7.16'
+}

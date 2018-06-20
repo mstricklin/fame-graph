@@ -1,13 +1,8 @@
 
 package com.ticomgeo.mstricklin;
 
-import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.MutableGraph;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -25,19 +20,42 @@ public class Main {
 
 	public static void main(String[] args) {
 		CLASS_LOGGER.info("Hello world");
-		Builder.Graph g0 = new Builder.Graph("Graph 0");
-		Builder b0 = Builder.on(g0);
-		Builder b1 = Builder.on(g0);
 
-		b0.startWith(new AProducer("begin0"));
-		b1.startWith(new AProducer("begin1"));
+		GraphRepresentation<String> gr = new GraphRepresentation<>("sam");
+		gr.startWith(new AProducer("0a"))
+				.andThen(new AProcessor("a"))
+				.andThen(new AProcessor("a"))
+				.andThen(new BProcessor("a"))
+				.endWith(new AConsumer("a"));
 
-		b0.andThen(new AProcessor("proc0a"));
-		b1.andThen(new AProcessor("proc1a"));
+		AConsumer ac = new AConsumer("c");
+		gr.startWith(new AProducer("c"))
+				.fanOut(new AProcessor("c"), new AProcessor("c"))
+				.stream().forEach(p -> p.endWith(new AConsumer("c")));
 
-		// TODO: b0 can't be at a producer
-		b0.join(b1);
+		GraphRepresentation.Starter s = gr.startWith(new AProducer("c"));
+		s.andThen(new AProcessor("d"));
+		s.andThen(new AProcessor("d"));
 
+		System.out.println(gr.graphviz());
+
+
+		// scenarios:
+		// find an intermediate by name
+
+		// X fan from one producer to multiple processors
+		// fan from one processor to multiple consumers
+		// X fan from one processor to multiple processors
+		// fan from one producer to multiple consumers
+
+		// join from multiple producers to one consumer
+		// join from multiple producers to one processor
+		// join from multiple processors to one consumer
+
+		// X generate GraphViz
+		// create a collector?
+
+		gr.dump();
 
 
 //		b0.andThen(new Proc0("proc0a"));
@@ -46,22 +64,50 @@ public class Main {
 //		b0.andThen(new Proc0("proc0b"));
 //		b0.andThen(new Proc0("proc0c"));
 //		b0.lastly(new Cons0("cons0"));
-		CLASS_LOGGER.info("{}", g0);
+//		CLASS_LOGGER.info("{}", g0);
 	}
 
-	static class AProducer  extends AbstractNode implements Producer {
+	static int CNT = 0;
+
+	static class AProducer extends AbstractNode implements ProducerNode<String> {
 		AProducer(String id) {
-			super(id);
+			super(id+CNT++);
+		}
+
+		@Override
+		public String get() {
+			return null;
 		}
 	}
-	static class AProcessor  extends AbstractNode implements Processor {
+
+	static class AProcessor  extends AbstractNode implements ProcessorNode<String> {
 		AProcessor(String id) {
-			super(id);
+			super(id+CNT++);
+		}
+
+		@Override
+		public String apply(String s) {
+			return null;
 		}
 	}
-	static class AConsumer  extends AbstractNode implements Consumer {
+	static class BProcessor  extends AbstractNode implements ProcessorNode<String> {
+		BProcessor(String id) {
+			super(id+CNT++);
+		}
+
+		@Override
+		public String apply(String s) {
+			return null;
+		}
+	}
+	static class AConsumer  extends AbstractNode implements ConsumerNode<String> {
 		AConsumer(String id) {
-			super(id);
+			super(id+CNT++);
+		}
+
+		@Override
+		public void accept(String s) {
+
 		}
 	}
 

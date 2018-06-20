@@ -1,9 +1,10 @@
 package com.ticomgeo.mstricklin;
 
-import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.MutableGraph;
+import com.google.common.graph.Graph;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+
+import java.util.function.Supplier;
 
 /**
  * @author mstricklin
@@ -12,18 +13,7 @@ import org.slf4j.Logger;
 
 // TODO: rename
 public class Builder {
-	static class Graph {
-		public final String name;
-		Graph(String name) {
-			this.name = name;
-		}
-		MutableGraph<Node> graph = GraphBuilder.directed().build();
-		@Override
-		public String toString() {
-			return graph.toString();
-		}
 
-	}
 
 	@SuppressWarnings("unused")
 	private static final Logger CLASS_LOGGER = LoggerFactory.getLogger((new Throwable()).getStackTrace()[0].getClassName());
@@ -32,46 +22,36 @@ public class Builder {
 	private static final String NEWLINE = System.getProperty("line.separator");
 
 
+	static class Starter<T> {
+		private final Supplier<T> supplier;
+
+		private Starter(Supplier<T> supplier) {
+			this.supplier = supplier;
+		}
+		public static <T> Starter startWith(Supplier<T> supplier) {
+			return new Starter<T>(supplier);
+		}
+		public Intermediate andThen() {
+			return new Intermediate();
+		}
+		public Final endWith() {
+			return new Final();
+		}
+	}
+	static class Intermediate {
+		public Intermediate andThen() {
+			return this;
+		}
+		public Final endWith() {
+			return new Final();
+		}
+	}
+	static class Final {
+		public GraphRepresentation build() {
+			return null;
+		}
+	}
 
 	Node frontier;
-
-	private Builder(Graph g) {
-		this.g = g;
-	}
-	private Builder extend(Node n) {
-		g.graph.addNode(n);
-		g.graph.putEdge(frontier, n);
-		frontier = n;
-		return this;
-	}
-	final Graph g;
-	static Builder on(Graph g) {
-		return new Builder(g);
-	}
-	Builder startWith(Producer p0) {
-		this.g.graph.addNode(p0);
-		frontier = p0;
-		return this;
-	}
-
-	Builder andThen(Processor p) {
-		return extend(p);
-	}
-
-	Builder fork(Processor p0,
-	             Processor... p) {
-		return this;
-	}
-
-	Builder join(Builder b0,
-	                     Builder... b) {
-		g.graph.putEdge(b0.frontier, frontier);
-		b0.frontier = frontier;
-		return this;
-	}
-
-	Builder lastly(Consumer c) {
-		return extend(c);
-	}
 
 }

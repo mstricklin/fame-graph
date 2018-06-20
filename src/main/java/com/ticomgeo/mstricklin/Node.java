@@ -6,4 +6,5 @@ package com.ticomgeo.mstricklin;
  */
 public interface Node {
 	String getId();
+	String graphviz();
 }

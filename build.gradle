@@ -1,6 +1,12 @@
 apply plugin: 'java'
 apply plugin: 'idea'
 
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
 
 group 'com.ticomgeo.pom'
 version '1.0-SNAPSHOT'
@@ -15,6 +21,9 @@ repositories {
 
 dependencies {
     testCompile 'junit:junit:4.12'
+
+    testCompile 'com.google.guava:guava:24.1-jre:javadoc'
+    testCompile 'com.google.guava:guava:24.1-jre:sources'
 
     compile('com.google.guava:guava:24.1-jre') {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'

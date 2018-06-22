@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import static com.google.common.collect.Lists.newArrayList;
 
 public class GraphRepresentation {
 	@SuppressWarnings("unused")

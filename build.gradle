@@ -15,15 +15,13 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-    mavenLocal()
-    mavenCentral()
+    jcenter()
+    //mavenLocal()
+    //mavenCentral()
 }
 
 dependencies {
     testCompile 'junit:junit:4.12'
-
-    testCompile 'com.google.guava:guava:24.1-jre:javadoc'
-    testCompile 'com.google.guava:guava:24.1-jre:sources'
 
     compile('com.google.guava:guava:24.1-jre') {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
